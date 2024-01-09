@@ -1,0 +1,17 @@
+.nav-btn-wrapper{
+    display: flex;
+    justify-content: space-evenly;
+    margin: 10px;
+    button{
+        width: 100%;
+        margin: 0px;
+        border: 1px solid #ccc;
+        border-right: 0px;
+    }
+    button:last-child{
+        border-right: 1px solid #ccc;
+    }
+}
+.nav-btn-wrapper button.active {
+    background-color: #444;
+}

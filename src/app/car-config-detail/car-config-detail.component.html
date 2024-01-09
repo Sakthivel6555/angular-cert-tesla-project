@@ -1,0 +1,29 @@
+<h2>Step 2: Select your config and options</h2>
+<div class="car-config-wrapper">
+<form [formGroup]="configForm">
+    Config:
+    <select formControlName="configSelected" id="configSelect">
+        <option value="" selected>Choose..</option>
+         @for (modelItem of selectedModelConfig?.configs  ; track modelItem?.id) {
+        <option [value]='modelItem.id'>{{modelItem.description}}</option>
+        }
+    </select>
+    @if(selectedDetails){
+        <div class="individual-config-detail">
+            <p>Range: {{selectedDetails?.range}} - Max speed: Range: {{selectedDetails?.speed}} </p>
+        </div>
+    }
+    @if (selectedModelConfig?.towHitch) {
+        <div>
+            <label for="includeTow">Tow hitch? </label>
+            <input id = "includeTow" type="checkbox" formControlName="towHitch">
+        </div>
+    }
+    @if (selectedModelConfig?.yoke) {
+        <div>
+            <label for="includeYoke">Yoke steering wheel?</label>
+            <input id = "includeYoke" type="checkbox" formControlName="steeringWheel">
+        </div>
+    }
+</form>
+</div>
