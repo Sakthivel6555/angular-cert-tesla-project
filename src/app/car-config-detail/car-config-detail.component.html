@@ -4,23 +4,25 @@
         {{configText}}
         <select formControlName="configSelected" id="configSelect">
             <option value="">{{chooseDropdown}}</option>
-            @for (modelItem of selectedModelConfig?.configs ; track modelItem?.id) {
+            @if(selectedModelConfig && selectedModelConfig.configs){
+            @for (modelItem of selectedModelConfig.configs ; track modelItem?.id) {
             <option [value]='modelItem.id'>{{modelItem.description}}</option>
+            }
             }
         </select>
         @if(selectedDetails && !!configForm.value.configSelected){
         <div class="individual-config-detail">
-            <p>{{range}}: {{selectedDetails?.range}} {{miles}} - {{maxSpeed}}: {{selectedDetails?.speed}} - {{cost}}:
-                {{selectedDetails?.price | currency : 'USD'}} </p>
+            <p>{{range}}: {{selectedDetails.range}} {{miles}} - {{maxSpeed}}: {{selectedDetails.speed}} - {{cost}}:
+                {{selectedDetails.price | currency : 'USD'}} </p>
         </div>
         }
-        @if (selectedModelConfig?.towHitch) {
+        @if (selectedModelConfig && selectedModelConfig.towHitch) {
         <div>
             <label for="includeTow">{{towHitch}} </label>
             <input id="includeTow" type="checkbox" formControlName="towHitch">
         </div>
         }
-        @if (selectedModelConfig?.yoke) {
+        @if (selectedModelConfig && selectedModelConfig.yoke) {
         <div>
             <label for="includeYoke">{{yokeWheel}}</label>
             <input id="includeYoke" type="checkbox" formControlName="steeringWheel">
