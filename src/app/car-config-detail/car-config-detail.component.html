@@ -8,7 +8,7 @@
             <option [value]='modelItem.id'>{{modelItem.description}}</option>
             }
         </select>
-        @if(selectedDetails){
+        @if(selectedDetails && !!configForm.value.configSelected){
         <div class="individual-config-detail">
             <p>{{range}}: {{selectedDetails?.range}} {{miles}} - {{maxSpeed}}: {{selectedDetails?.speed}} - {{cost}}:
                 {{selectedDetails?.price | currency : 'USD'}} </p>
