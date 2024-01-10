@@ -1,23 +1,23 @@
 export interface ModelConfigData {
-    [key:string]: ModelConfig;
+    [key: string]: ModelConfig;
 }
 
 export interface ModelConfig {
-    configs:  Config[];
+    configs: Config[];
     towHitch?: boolean;
-    yoke?:     boolean;
+    yoke?: boolean;
 }
 
 export interface ConfigDetail {
     configDetails: Config;
-    towHitch:      boolean|null|undefined;
-    steeringWheel: boolean|null|undefined;
+    towHitch: boolean;
+    steeringWheel: boolean;
 }
 
 export interface Config {
-    id:          number;
+    id: number;
     description: string;
-    range:       number;
-    speed:       number;
-    price:       number;
+    range: number;
+    speed: number;
+    price: number;
 }

@@ -1,16 +1,16 @@
 export interface Model {
-    code:        string;
+    code: string;
     description: string;
-    colors:      Color[];
+    colors: Color[];
 }
 
 export interface Color {
-    code:        string;
+    code: string;
     description: string;
-    price:       number;
+    price: number;
 }
 
-export type ModelWithoutColors = Omit<Model,'colors'>;
+export type ModelWithoutColors = Omit<Model, 'colors'>;
 
 export interface SelectedConfig {
     model: ModelWithoutColors;

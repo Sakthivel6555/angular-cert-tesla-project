@@ -1,9 +1,12 @@
 import { JsonPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { CarDataService } from '../service/car-data.service';
-import { Color, Model, ModelWithoutColors } from '../shared/model.interface';
 import { SharedDataService } from '../service/shared-data.service';
+import { chooseDropdown, chooseModel, colorlDropdown, modelDropdown, step1 } from '../shared/constant/common.constant';
+import { Color, Model, ModelWithoutColors } from '../shared/model.interface';
 
 @Component({
   selector: 'app-car-model-detail',
@@ -15,9 +18,10 @@ import { SharedDataService } from '../service/shared-data.service';
 export class CarModelDetailComponent {
   models: Model[] = [];
   colors: Color[] = [];
-  asynModel$: Model[] = []
   selectedModel!: ModelWithoutColors;
-  selectedColor!: Color;
+  modelDropdown = modelDropdown; colorlDropdown = colorlDropdown; chooseDropdown = chooseDropdown;
+  chooseModel = chooseModel; step1 = step1;
+  unSubscribe$: Subject<boolean> = new Subject<boolean>();
 
   modelForm = new FormGroup({
     carModel: new FormControl('', [Validators.required]),
@@ -26,10 +30,8 @@ export class CarModelDetailComponent {
 
   constructor(private carDataService: CarDataService, private sharedDataService: SharedDataService) { }
 
-
   ngOnInit() {
-    this.modelForm.controls['carModel'].valueChanges.subscribe((data) => {
-      console.log(data)
+    this.modelForm.controls['carModel'].valueChanges.pipe(takeUntil(this.unSubscribe$)).subscribe((data) => {
       this.models.forEach((model) => {
         if (model.code === data) {
           this.selectedModel = {
@@ -42,67 +44,54 @@ export class CarModelDetailComponent {
       })
     })
 
-    this.modelForm.controls['modelColor'].valueChanges.subscribe((code) => {
-      console.log(this.models);
-      console.log(code)
+    this.modelForm.controls['modelColor'].valueChanges.pipe(takeUntil(this.unSubscribe$)).subscribe((code) => {
       const color = this.models.filter((model) => model.code === this.selectedModel.code)[0].colors
         .filter((color) =>
           color.code === code
         )[0]
-      console.log(color)
       this.selectedModelDatail(this.selectedModel, color);
     })
 
-    this.modelForm.valueChanges.subscribe((data) => {
-      if(this.modelForm?.valid){
-        this.carDataService.changeCarModelValid(false)
+    this.modelForm.valueChanges.pipe(takeUntil(this.unSubscribe$)).subscribe((data) => {
+      if (this.modelForm?.valid) {
+        this.sharedDataService.changeCarModelValid(false)
       } else {
-        this.carDataService.changeCarModelValid(true)
+        this.sharedDataService.changeCarModelValid(true)
       }
     })
 
-    if(!this.sharedDataService.saveModelData){
-    // this.asynModel$ = this.carDataService.getModelDataAsync();
+    if (!this.sharedDataService.saveModelData) {
+      this.carDataService.getModelData().pipe(takeUntil(this.unSubscribe$)).subscribe((data) => {
+        this.models = data;
+        this.sharedDataService.saveModelData = data;
+      })
 
-    this.carDataService.getModelData().subscribe((data) => {
-      console.log(data);
-      this.models = data;
-      this.sharedDataService.saveModelData = data;
-    })
-  } else {
-    // to retain data between routes
-    this.models = this.sharedDataService.saveModelData;
-    this.modelForm.setValue({
-      carModel : this.sharedDataService.saveCarModel.model.code,
-      modelColor : this.sharedDataService.saveCarModel.color.code,
-    })
-  }
+    } else {
+      // to retain data between routes
+      this.models = this.sharedDataService.saveModelData;
+      this.modelForm.setValue({
+        carModel: this.sharedDataService.saveCarModel.model.code,
+        modelColor: this.sharedDataService.saveCarModel.color.code,
+      })
+    }
   }
 
   selectedModelDatail(model: ModelWithoutColors, color: Color) {
     if (color) {
-      console.log(model);
-      console.log(color)
-
-      this.carDataService.changeCarModel({ model, color })
+      this.sharedDataService.changeCarModel({ model, color })
       this.sharedDataService.saveCarModel = { model, color };
     }
   }
 
   modelChange() {
-    this.carDataService.changeCarConfigValid(true)
-    this.sharedDataService.savechangeCarConfig = {
-      configDetails : {
-        id: 0,
-        description: '',
-        range: 0,
-        speed: 0,
-        price: 0
-      },
-      towHitch: false,
-      steeringWheel: false
-    }
+    this.sharedDataService.changeCarConfigValid(true)
+    this.sharedDataService.isModelChanged = true;
+    this.sharedDataService.savechangeCarConfig = undefined;
   }
 
+  ngOnDestroy() {
+    this.unSubscribe$.next(true);
+    this.unSubscribe$.unsubscribe();
+  }
 
 }

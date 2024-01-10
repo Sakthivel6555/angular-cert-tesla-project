@@ -1,48 +1,45 @@
-  import {Component, ViewChild} from '@angular/core';
-  import { CommonModule } from '@angular/common';
-import {AsyncPipe, JsonPipe} from '@angular/common';
-import {CarDataService} from './service/car-data.service'
-import { CarModelDetailComponent } from './car-model-detail/car-model-detail.component';
-import { CarConfigDetailComponent } from './car-config-detail/car-config-detail.component';
-import { CarSummaryComponent } from './car-summary/car-summary.component';
-import { CarImageComponent } from './car-image/car-image.component';
+import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
+import { Component } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { CarImageComponent } from './car-image/car-image.component';
+import { CarDataService } from './service/car-data.service';
+import { SharedDataService } from './service/shared-data.service';
+import { step1, step2, step3 } from './shared/constant/common.constant';
 
-
-
-@Component({ 
+@Component({
   selector: 'app-root',
-  standalone: true, 
-  imports: [AsyncPipe, JsonPipe,CommonModule, CarImageComponent,
-     ReactiveFormsModule,RouterOutlet,RouterLink,RouterLinkActive,
-    HttpClientModule],
+  standalone: true,
+  imports: [CommonModule, CarImageComponent,ReactiveFormsModule, RouterOutlet,
+    RouterLink, RouterLinkActive, HttpClientModule],
   providers: [CarDataService],
   templateUrl: './app.component.html',
-  styleUrls : ['./app.component.scss']
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  @ViewChild('modelDetail', {static: true}) modelDetail!: CarModelDetailComponent
-  @ViewChild('configDetail', {static: true}) configDetail!: CarConfigDetailComponent
-  name = 'Angular';
-  isLinear = true;
-  step2:boolean = true;
-  step3:boolean = true;
+  step2: boolean = true;
+  step3: boolean = true;
+  step1Text = step1; step2Text = step2; step3Text = step3;
+  unSubscribe$: Subject<boolean> = new Subject<boolean>();
 
-  constructor(private carDataService: CarDataService) {  }
-
+  constructor(private carDataService: CarDataService, private sharedDataService: SharedDataService) { }
 
   ngOnInit() {
-      this.carDataService.carModelValidService.subscribe((val) => {
-        console.log(val)
-        this.step2 = val;
-      })
-      
-      this.carDataService.carConfigValidService.subscribe((val) => {
-        console.log(val)
-        this.step3 = val;
-      })
+    this.sharedDataService.carModelValidService.pipe(takeUntil(this.unSubscribe$)).subscribe((val) => {
+      this.step2 = val;
+    })
+
+    this.sharedDataService.carConfigValidService.pipe(takeUntil(this.unSubscribe$)).subscribe((val) => {
+      this.step3 = val;
+    })
+  }
+
+  ngOnDestroy() {
+    this.unSubscribe$.next(true);
+    this.unSubscribe$.unsubscribe();
   }
 
 }

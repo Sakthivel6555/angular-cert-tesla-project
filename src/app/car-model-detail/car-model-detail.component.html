@@ -1,19 +1,19 @@
-<h2>Step 1: Choose your Model and color</h2>
+<h2>{{step1}}: {{chooseModel}}</h2>
 <form [formGroup]="modelForm">
-    <label>Model: </label>
-    <select formControlName="carModel" id="modelSelect" (change) = "modelChange()">
-        <option value="" >Choose..</option>
-         @for (model of models; track model.code) {
+    <label>{{modelDropdown}}: </label>
+    <select formControlName="carModel" id="modelSelect" (change)="modelChange()">
+        <option value="">{{chooseDropdown}}</option>
+        @for (model of models; track model.code) {
         <option [value]='model.code'>{{model.description}}</option>
         }
     </select>
 
     @if (modelForm.controls['carModel'].valid) {
-        <label>Color: </label>
-        <select formControlName="modelColor" id="colorSelect">
-            @for (color of colors; track color.code) {
-            <option [value]='color.code'>{{color.description}}</option>
-            }
-        </select>
+    <label>{{colorlDropdown}}: </label>
+    <select formControlName="modelColor" id="colorSelect">
+        @for (color of colors; track color.code) {
+        <option [value]='color.code'>{{color.description}}</option>
         }
+    </select>
+    }
 </form>

@@ -1,30 +1,15 @@
 
-<!-- <router-outlet></router-outlet > -->
-
-<!-- <mat-stepper [linear]="isLinear" #stepper>
-  <mat-step [completed]="modelDetail.modelForm.status == 'VALID'" label="Step 1">
-        {{modelDetail.modelForm.status}}
-    <app-car-model-detail #modelDetail ></app-car-model-detail>
-
-  </mat-step>
-  <mat-step label="Step 2" [completed]="configDetail.configForm.status == 'VALID'" >
-    <app-car-config-detail #configDetail></app-car-config-detail>
-  </mat-step>
-  <mat-step label="Step 3">
-    <ng-template matStepLabel>Done</ng-template>
-    <app-car-summary></app-car-summary>
-  </mat-step>
-</mat-stepper> -->
 
 <div>
   <div class="nav-btn-wrapper">
-    <button id="step1" [routerLink]="'/car-model'" routerLinkActive="active">Step 1</button>
-    <button id="step2" [routerLink]="'/car-config'" routerLinkActive="active" [disabled]="step2">Step 2</button>
-    <button id="step3" [routerLink]="'/car-summary'" routerLinkActive="active" [disabled]="step3">Step 3</button>
+    <button id="step1" [routerLink]="'/car-model'" routerLinkActive="active">{{step1Text}}</button>
+    <button id="step2" [routerLink]="'/car-config'" routerLinkActive="active" [disabled]="step2">{{step2Text}}</button>
+    <button id="step3" [routerLink]="'/car-summary'" routerLinkActive="active" [disabled]="step3">{{step3Text}}</button>
   </div>
-</div>
-<router-outlet></router-outlet>
 
-<div>
-  <app-car-image></app-car-image>
+  <router-outlet></router-outlet>
+
+  <div>
+    <app-car-image></app-car-image>
+  </div>
 </div>
